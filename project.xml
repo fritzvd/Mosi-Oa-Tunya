@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<meta title="Mosi-Oa-Tunya" package="com.example.app" version="1.0.0" company="" />
+	<meta title="Mosi-Oa-Tunya" package="com.fritzvd.mosioatunya" version="1.0.0" company="" />
 
  	<app file="Main" main="Main" path="bin" />
 
@@ -12,6 +12,7 @@
 	<source path="src" />
 
 	<haxelib name="HaxePunk" />
+	<haxelib name="nape" />
 
 	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg" />
 	<assets path="assets/audio" rename="audio" include="*.mp3" if="flash" />

@@ -1,3 +1,5 @@
+package;
+
 import com.haxepunk.graphics.Emitter;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.utils.Ease;
@@ -10,7 +12,7 @@ class EmitController extends Entity
 	public function new()
 	{
 		super(x, y);
-    _emitter = new Emitter("graphics/particle.png", 4, 4);
+    _emitter = new Emitter("graphics/particle.png", 1, 1);
     _emitter.newType("splash", [0]);
     _emitter.setMotion("splash",  		// name
         	0, 				// angle
@@ -19,7 +21,7 @@ class EmitController extends Entity
         	20, 			// ? angle range
         	-20, 			// ? distance range
         	1, 				// ? Duration range
-        	Ease.quadOut	// ? Easing
+        	Ease.quadIn	// ? Easing
         	);
     _emitter.setAlpha("splash", 20, 0.1);
     _emitter.setGravity("splash", 5, 1);
