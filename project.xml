@@ -13,6 +13,7 @@
 
 	<haxelib name="HaxePunk" />
 	<haxelib name="nape" />
+	<haxelib name="box2d" />
 	<haxelib name="noisehx" />
 
 	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg" />

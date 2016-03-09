@@ -13,5 +13,4 @@ class Main extends Engine
 	}
 
 	public static function main() { new Main(); }
-
 }

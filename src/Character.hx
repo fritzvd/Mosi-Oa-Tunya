@@ -5,28 +5,23 @@ import com.haxepunk.HXP;
 import com.haxepunk.graphics.Image;
 import com.haxepunk.graphics.Graphiclist;
 
-import nape.phys.Body;
-import nape.phys.Compound;
-import nape.shape.Polygon;
-import nape.geom.Vec2;
-import nape.space.Space;
-import nape.constraint.WeldJoint;
+import box2D.dynamics.*;
+import box2D.common.math.B2Vec2;
+import box2D.collision.shapes.*;
 
 class Character extends Entity {
   public var sprite:Image;
-  public var leftOar:Body;
-  public var rightOar:Body;
-  public var boat:Compound;
+  public var boatDef:B2BodyDef;
+  public var boat:B2Body;
+  public var boatShape:B2PolygonShape;
+  public var boatFixture:B2FixtureDef;
 
-  private var boatConstraint:WeldJoint;
-  private var leftOarBox:Image;
-  private var graphicList:Graphiclist;
-  private var rightOarBox:Image;
   private var boatAngle:Float;
   private var boatSpeed:Float;
   private var turnSpeed:Float;
   private var rowRadius:Float;
   private var moveDirection:String;
+  private var physScale:Int;
 
   public function new (x,  y) {
     super(x, y);
@@ -37,10 +32,6 @@ class Character extends Entity {
     sprite.centerOrigin();
     graphic = sprite;
 
-#if debug
-    graphicList = new Graphiclist();
-    graphic = graphicList;
-#end
     turnSpeed = 0.1;
     boatSpeed = 0.9;
     boatAngle = Math.PI / 2;
@@ -49,54 +40,44 @@ class Character extends Entity {
     name = 'kagiso';
     layer = 1;
 
-    leftOar = new Body();
-    rightOar = new Body();
+    var scene:MainScene = cast(HXP.scene, MainScene);
+    physScale = scene.physScale;
 
-#if debug
-    rightOarBox = Image.createRect(10, 10);
-    // rightOarBox.originX = 5;
-    // rightOarBox.originY = -10;
-    leftOarBox = Image.createRect(10, 10);
-    // leftOarBox.originX = 5;
-    // leftOarBox.originY = -10;
-    graphicList.add(rightOarBox);
-    graphicList.add(leftOarBox);
-#end
+    var boatShape:B2PolygonShape= new B2PolygonShape();
+		boatDef = new B2BodyDef();
+    boatDef.type = 2; // dynamic
 
-    leftOar.position.setxy(this.x - 15, this.y - 10);
-		rightOar.position.setxy(this.x + 15, this.y - 10);
-    leftOar.shapes.add(new Polygon(Polygon.box(10, 10)));
-		rightOar.shapes.add(new Polygon(Polygon.box(10, 10)));
-    var anchor:Vec2 = new Vec2(this.x, this.y + 30);
-    var anchor1:Vec2 = leftOar.worldPointToLocal(anchor, true);
-    var anchor2:Vec2 = rightOar.worldPointToLocal(anchor, true);
-    var phase:Float = rightOar.rotation - leftOar.rotation;
-    boatConstraint = new WeldJoint(leftOar, rightOar, anchor1, anchor2, phase);
-
-    boat = new Compound();
-    leftOar.compound = boat;
-    rightOar.compound = boat;
-    boatConstraint.compound = boat;
+    boatDef.position.set(Std.int(x) / physScale, Std.int(y) / physScale);
+		boatShape.setAsBox(sprite.scaledWidth / physScale, sprite.scaledHeight / physScale / 2);
+    boatFixture = new B2FixtureDef ();
+    boatFixture.density = 100;
+    boatFixture.shape = boatShape;
 
     setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
   }
 
   public function row(?left:Bool) {
 
-    var impulse:Vec2 = Vec2.weak();
+    var impulse:B2Vec2 = new B2Vec2(0, 0);
 
     var p = calculateVector(x, y, rowRadius, boatAngle, left);
     var v = calculateArc(left);
 
-    impulse.x = v.get('x');
-    impulse.y = v.get('y') - 1;
+    impulse.x = p.get('x');
+    impulse.y = p.get('y') - 1;
 
-    if (left) {
-      this.leftOar.applyImpulse(impulse);
-    }
-    else {
-      this.rightOar.applyImpulse(impulse);
-    }
+    var direction = (left) ? -1 : 1;
+    var c = 3000;
+    var force:B2Vec2 = new B2Vec2(v.get('x') * c, v.get('y') * c);
+
+    this.boat.applyForce(force, new B2Vec2(
+      direction * Math.cos(boatAngle),
+      direction * Math.sin(boatAngle))
+    );
+
+    this.boat.applyTorque(c * direction * Math.abs(boatAngle - p.get('angle')));
+
+    return boatAngle;
   }
 
   private function calculateArc (?left:Bool) {
@@ -105,13 +86,13 @@ class Character extends Entity {
     var velY:Float = 0;
 
     if (left) {
-      velX -= boatSpeed * Math.cos(boatAngle);
-      velY -= boatSpeed * Math.sin(boatAngle);
+      velX -= boatSpeed * Math.cos(boatAngle + Math.PI / 2);
+      velY -= boatSpeed * Math.sin(boatAngle + Math.PI / 2);
       boatAngle = boatAngle - turnSpeed;
 
     } else {
-      velX += boatSpeed * Math.cos(boatAngle);
-      velY += boatSpeed * Math.sin(boatAngle);
+      velX += boatSpeed * Math.cos(boatAngle + Math.PI / 2);
+      velY += boatSpeed * Math.sin(boatAngle + Math.PI / 2);
       boatAngle = boatAngle + turnSpeed;
 
     }
@@ -147,20 +128,11 @@ class Character extends Entity {
     return newLocation;
   }
   public override function update () {
-    sprite.angle = leftOar.rotation * HXP.DEG;
+    var pos:B2Vec2 = boat.getPosition();
+    sprite.angle = 90 + boatAngle * HXP.DEG;
 
-    var dx = Math.sqrt(Math.pow(leftOar.position.x, 2) - Math.pow(rightOar.position.x, 2));
-    var dy = Math.sqrt(Math.pow(leftOar.position.y, 2) - Math.pow(rightOar.position.y, 2));
-    var anchorpoint = leftOar.localPointToWorld(boatConstraint.anchor1);
-    x = anchorpoint.x;
-    y = anchorpoint.y;
-
-#if debug
-    leftOarBox.x = leftOar.position.x;
-    leftOarBox.y = leftOar.position.y;
-    rightOarBox.y = rightOar.position.y;
-    rightOarBox.x = rightOar.position.x;
-#end
+    this.x = pos.x * physScale;
+    this.y = pos.y * physScale;
     super.update();
   }
 }
