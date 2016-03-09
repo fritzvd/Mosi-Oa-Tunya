@@ -43,8 +43,8 @@ class Character extends Entity {
     name = 'kagiso';
     layer = 1;
 
-    endOfLeftOar = new B2Vec2(0, 0);
-    endOfRightOar = new B2Vec2(0, 0);
+    endOfLeftOar = new B2Vec2(x + 60 * Math.cos(boatAngle), y + 60 * Math.sin(boatAngle));
+    endOfRightOar = new B2Vec2(x - 60 * Math.cos(boatAngle), y - 60 * Math.sin(boatAngle));
 
     var scene:MainScene = cast(HXP.scene, MainScene);
     physScale = scene.physScale;
@@ -56,7 +56,6 @@ class Character extends Entity {
     boatDef.position.set(Std.int(x) / physScale, Std.int(y) / physScale);
 		boatShape.setAsBox(sprite.scaledWidth / physScale, sprite.scaledHeight / physScale / 2);
     boatFixture = new B2FixtureDef ();
-    boatFixture.density = 100;
     boatFixture.shape = boatShape;
 
     setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
@@ -81,10 +80,7 @@ class Character extends Entity {
       direction * Math.sin(boatAngle))
     );
 
-    endOfRightOar.x = this.x + 60 * Math.cos(boatAngle);
-    endOfRightOar.y = this.y + 60 * Math.sin(boatAngle);
-    endOfLeftOar.x = this.x - 60 * Math.cos(boatAngle);
-    endOfLeftOar.y = this.y - 60 * Math.sin(boatAngle);
+    return boatAngle;
   }
 
   public function holdOar(?left:Bool) {
@@ -93,6 +89,8 @@ class Character extends Entity {
     var c = 3000;
 
     this.boat.applyTorque(c * direction * Math.abs(boatAngle - p.get('angle')));
+
+    return boatAngle;
   }
 
   private function calculateArc (?left:Bool) {
@@ -148,6 +146,11 @@ class Character extends Entity {
 
     this.x = pos.x * physScale;
     this.y = pos.y * physScale;
+
+    endOfRightOar.x = this.x + 20 * Math.cos(boatAngle);
+    endOfRightOar.y = this.y + 20 * Math.sin(boatAngle);
+    endOfLeftOar.x = this.x - 40 * Math.cos(boatAngle);
+    endOfLeftOar.y = this.y - 40 * Math.sin(boatAngle);
     super.update();
   }
 }
