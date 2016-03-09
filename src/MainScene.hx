@@ -1,10 +1,15 @@
 import com.haxepunk.Scene;
 import com.haxepunk.HXP;
+import com.haxepunk.utils.Input;
+import com.haxepunk.utils.Key;
+
+import noisehx.Perlin;
 
 import Inputs;
 import Character;
 import EmitController;
 import Mountain;
+import Debris;
 
 import nape.space.Space;
 import nape.geom.Vec2;
@@ -19,18 +24,17 @@ class MainScene extends Scene
 	private var ec:EmitController;
 	private var mountain:Mountain;
 	private var space:Space;
-	private var boatBody:Body;
-	// private var boat:Polygon;
+	private var perlin:Perlin;
 
 	public override function begin()
 	{
 
 		// WATERFALL_SPEED = 0.3;
-		kagiso = new Character(200, 200);
-		add(kagiso);
+		kagiso = add(new Character(300, 0));
 		ec = add(new EmitController());
 		mountain = add(new Mountain(10,10));
 
+		perlin = new Perlin();
 		setupPhysics();
 	}
 
@@ -38,37 +42,46 @@ class MainScene extends Scene
 		var gravity:Vec2 = new Vec2(0, 10);
 		space = new Space(gravity);
 
-		var boat:Polygon = new Polygon(Polygon.box(kagiso.sprite.width, kagiso.sprite.height));
-		boatBody = new Body();
-		boatBody.position.setxy(kagiso.x, kagiso.y);
-		boatBody.shapes.add(boat);
-
 		var floorBody:Body = new Body(BodyType.STATIC);
-		var floorShape:Polygon = new Polygon(Polygon.rect(0, HXP.height, HXP.width, 1));
+		var floorShape:Polygon = new Polygon(Polygon.rect(0, HXP.height + 15, HXP.width, 1));
 		floorBody.shapes.add(floorShape);
-		space.bodies.add(boatBody);
+		space.compounds.add(kagiso.boat);
 		space.bodies.add(floorBody);
+
+				for (i in 0...10) {
+					var debrisx:Float = Math.random() * HXP.width;
+					var debrisy:Float = Math.random() * HXP.height;
+					trace(debrisx, debrisy);
+					var lily = add(new Debris(debrisx, debrisy));
+					lily.setGraphic('graphics/lily.png');
+					lily.setGravity(Math.random() * 0.5);
+					space.bodies.add(lily.body);
+				}
 	}
 
 	public override function update () {
 		super.update();
 		space.step(HXP.elapsed);
 
-
-		// if (Inputs.action() == 'right') {
-		// 	kagiso.goRight();
-		// 	ec.splash(kagiso.x, kagiso.y);
-		// }
-		// if (Inputs.action() == 'left') {
-		// 	kagiso.goLeft();
-		// 	ec.splash(kagiso.x, kagiso.y);
-		// }
+		if (Inputs.action() == 'right') {
+			kagiso.row(false);
+			ec.splash(kagiso.x, kagiso.y);
+		}
+		if (Inputs.action() == 'left') {
+			kagiso.row(true);
+			ec.splash(kagiso.x, kagiso.y);
+		}
 
 		if (kagiso.collideWith(mountain, mountain.x, mountain.y) != null) {
 			// trace('wiehaa');
 		}
 
-		kagiso.y = boatBody.position.y;
+		if (Input.check(Key.ESCAPE)) {
+			#if !html5
+			openfl.system.System.exit();
+			#end
+		}
+		// kagiso.y = boatBody.position.y;
 		// kagiso.y += WATERFALL_SPEED;
 
 	}

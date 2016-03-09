@@ -12,7 +12,7 @@ class EmitController extends Entity
 	public function new()
 	{
 		super(x, y);
-    _emitter = new Emitter("graphics/particle.png", 1, 1);
+    _emitter = new Emitter("graphics/particle.png", 5, 5);
     _emitter.newType("splash", [0]);
     _emitter.setMotion("splash",  		// name
         	0, 				// angle
@@ -20,13 +20,13 @@ class EmitController extends Entity
         	0.5, 				// duration
         	20, 			// ? angle range
         	-20, 			// ? distance range
-        	1, 				// ? Duration range
+        	4, 				// ? Duration range
         	Ease.quadIn	// ? Easing
         	);
     _emitter.setAlpha("splash", 20, 0.1);
     _emitter.setGravity("splash", 5, 1);
     graphic = _emitter;
-    layer = -1;
+    layer = 10;
 	}
 
 	public function splash(x:Float, y:Float)
