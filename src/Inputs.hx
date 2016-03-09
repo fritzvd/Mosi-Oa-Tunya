@@ -56,6 +56,23 @@ class Inputs {
     }
 
     return _action;
+
+  }
+
+  static inline public function holding () {
+    var _holding:String = null;
+
+    if (Input.joystick(0).check(XBOX_GAMEPAD.A_BUTTON) ||
+        Input.check(Key.Z)) {
+          _holding = 'left';
+    }
+
+    if (Input.joystick(0).check(XBOX_GAMEPAD.B_BUTTON) ||
+        Input.check(Key.X)) {
+          _holding = 'right';
+    }
+
+    return _holding;
   }
 
 }

@@ -16,6 +16,9 @@ class Character extends Entity {
   public var boatShape:B2PolygonShape;
   public var boatFixture:B2FixtureDef;
 
+  public var endOfRightOar:B2Vec2;
+  public var endOfLeftOar:B2Vec2;
+
   private var boatAngle:Float;
   private var boatSpeed:Float;
   private var turnSpeed:Float;
@@ -39,6 +42,9 @@ class Character extends Entity {
 
     name = 'kagiso';
     layer = 1;
+
+    endOfLeftOar = new B2Vec2(0, 0);
+    endOfRightOar = new B2Vec2(0, 0);
 
     var scene:MainScene = cast(HXP.scene, MainScene);
     physScale = scene.physScale;
@@ -75,9 +81,18 @@ class Character extends Entity {
       direction * Math.sin(boatAngle))
     );
 
-    this.boat.applyTorque(c * direction * Math.abs(boatAngle - p.get('angle')));
+    endOfRightOar.x = this.x + 60 * Math.cos(boatAngle);
+    endOfRightOar.y = this.y + 60 * Math.sin(boatAngle);
+    endOfLeftOar.x = this.x - 60 * Math.cos(boatAngle);
+    endOfLeftOar.y = this.y - 60 * Math.sin(boatAngle);
+  }
 
-    return boatAngle;
+  public function holdOar(?left:Bool) {
+    var p = calculateVector(x, y, rowRadius, boatAngle, left);
+    var direction = (left) ? -1 : 1;
+    var c = 3000;
+
+    this.boat.applyTorque(c * direction * Math.abs(boatAngle - p.get('angle')));
   }
 
   private function calculateArc (?left:Bool) {

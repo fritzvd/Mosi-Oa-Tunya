@@ -74,19 +74,28 @@ class MainScene extends Scene
 		world.clearForces();
 
 		if (Inputs.action() == 'right') {
-			var angle = kagiso.row(false);
-			ec.splash(kagiso.x + 60 * Math.cos(angle), kagiso.y + 60 * Math.sin(angle));
+			kagiso.row(false);
+			ec.splash(kagiso.endOfRightOar.x, kagiso.endOfRightOar.y);
 		}
 		if (Inputs.action() == 'left') {
-			var angle = kagiso.row(true);
-			ec.splash(kagiso.x - 60* Math.cos(angle), kagiso.y - 60 * Math.sin(angle));
+			kagiso.row(true);
+			ec.splash(kagiso.endOfLeftOar.x, kagiso.endOfLeftOar.y);
+		}
+
+		if (Inputs.action() == 'right') {
+			kagiso.row(false);
+			ec.splash(kagiso.endOfRightOar.x, kagiso.endOfRightOar.y);
+		}
+		if (Inputs.action() == 'left') {
+			kagiso.row(true);
+			ec.splash(kagiso.endOfLeftOar.x, kagiso.endOfLeftOar.y);
 		}
 
 		if (kagiso.collideWith(mountain, mountain.x, mountain.y) != null) {
 			// trace('wiehaa');
 		}
 
-		camera.y = kagiso.y - HXP.height / 2;
+		// camera.y = kagiso.y - HXP.height / 2;
 
 		if (Input.check(Key.ESCAPE)) {
 			#if !html5
