@@ -63,13 +63,8 @@ class Character extends Entity {
 
   public function row(?left:Bool) {
 
-    var impulse:B2Vec2 = new B2Vec2(0, 0);
-
-    var p = calculateVector(x, y, rowRadius, boatAngle, left);
+    // var p = calculateVector(x, y, rowRadius, boatAngle, left);
     var v = calculateArc(left);
-
-    impulse.x = p.get('x');
-    impulse.y = p.get('y') - 1;
 
     var direction = (left) ? -1 : 1;
     var c = 3000;
@@ -99,8 +94,8 @@ class Character extends Entity {
     var velY:Float = 0;
 
     if (left) {
-      velX -= boatSpeed * Math.cos(boatAngle + Math.PI / 2);
-      velY -= boatSpeed * Math.sin(boatAngle + Math.PI / 2);
+      velX -= boatSpeed * Math.cos(boatAngle - Math.PI / 2);
+      velY -= boatSpeed * Math.sin(boatAngle - Math.PI / 2);
       boatAngle = boatAngle - turnSpeed;
 
     } else {
