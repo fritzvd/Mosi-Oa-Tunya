@@ -1,5 +1,10 @@
 # Mosi Oa Tunya - "The Smoke That Thunders"
-This is a small game I made for the 7 day Rogue-like challenge.
-For me it was barely a 2 day challenge though. Going about it in the weekend.
+Little Neo went swimming, and when he climbs back on board he realizes he has
+fallen prey to the current of the great Mosi-Oa-Tunya (Victoria Falls). Help
+him make his way out without dying.
 
 Check the game here: http://fritzvd.com/Mosi-Oa-Tunya
+
+# 7DRL
+This is a small game I made for the 7 day Rogue-like challenge.
+For me it was barely a 2 day challenge though. Going about it in the weekend.

@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import com.haxepunk.Entity;
 import com.haxepunk.HXP;
@@ -48,13 +48,18 @@ class Character extends Entity {
 
     var scene:MainScene = cast(HXP.scene, MainScene);
     physScale = scene.physScale;
+    setupPhysics();
 
+    setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
+  }
+
+  private function setupPhysics() {
     var boatShape:B2PolygonShape= new B2PolygonShape();
 		boatDef = new B2BodyDef();
     boatDef.type = 2; // dynamic
 
     boatDef.position.set(Std.int(x) / physScale, Std.int(y) / physScale);
-		boatShape.setAsBox(sprite.scaledWidth / physScale, sprite.scaledHeight / physScale / 2);
+		boatShape.setAsBox(sprite.scaledHeight / physScale, sprite.scaledWidth / physScale / 2);
     boatFixture = new B2FixtureDef ();
 
     boatFixture.shape = boatShape;
@@ -62,8 +67,6 @@ class Character extends Entity {
   }
 
   public function row(?left:Bool) {
-
-    // var p = calculateVector(x, y, rowRadius, boatAngle, left);
     var v = calculateArc(left);
 
     var direction = (left) ? -1 : 1;
@@ -78,12 +81,17 @@ class Character extends Entity {
     return boatAngle;
   }
 
+  public function die () {
+
+  }
+
   public function holdOar(?left:Bool) {
-    var p = calculateVector(x, y, rowRadius, boatAngle, left);
+    var angle = calculateNewAngle(boatAngle);
     var direction = (left) ? -1 : 1;
     var c = 3000;
 
-    this.boat.applyTorque(c * direction * Math.abs(boatAngle - p.get('angle')));
+    this.boat.applyTorque(c * direction * Math.abs(boatAngle - angle));
+    this.boat.setLinearDamping(1000);
 
     return boatAngle;
   }
@@ -109,32 +117,20 @@ class Character extends Entity {
     return velocity;
   }
 
-  /**
-   * a
-   * |\
-   * | \
-   * |  \
-   * |---.
-   * b    c
-   *
-   *  cx = ax + r sin a'
-   *  cy = ay - r(1 - cos a')
-   */
-  private function calculateVector (originX:Float, originY:Float, radius:Float, startAngle:Float, ?left:Bool=false) {
-    var newLocation = new Map<String, Float>();
-
+  private function calculateNewAngle (startAngle:Float) {
     var angle:Float = HXP.RAD * startAngle + 6.283185307 / 12; // move along a tenth of the circle
-    var direction = (left) ? -1 : 1;
-
-    var newx = originX + radius * Math.sin(angle);
-    var newy = originY - radius * (direction - Math.cos(angle));
-
-    newLocation.set('x', newx);
-    newLocation.set('y', newy);
-    newLocation.set('angle', angle);
-
-    return newLocation;
+    return angle;
   }
+
+  // Calculate the new xy of the Oars
+  // and place them in the right position.
+  private function placeOars () {
+    endOfRightOar.x = this.x + 20 * Math.cos(boatAngle);
+    endOfRightOar.y = this.y + 20 * Math.sin(boatAngle);
+    endOfLeftOar.x = this.x - 40 * Math.cos(boatAngle);
+    endOfLeftOar.y = this.y - 40 * Math.sin(boatAngle);
+  }
+
   public override function update () {
     var pos:B2Vec2 = boat.getPosition();
     sprite.angle = 90 + boatAngle * HXP.DEG;
@@ -142,10 +138,9 @@ class Character extends Entity {
     this.x = pos.x * physScale;
     this.y = pos.y * physScale;
 
-    endOfRightOar.x = this.x + 20 * Math.cos(boatAngle);
-    endOfRightOar.y = this.y + 20 * Math.sin(boatAngle);
-    endOfLeftOar.x = this.x - 40 * Math.cos(boatAngle);
-    endOfLeftOar.y = this.y - 40 * Math.sin(boatAngle);
+    placeOars();
+
     super.update();
+    this.boat.setLinearDamping(0.0);
   }
 }

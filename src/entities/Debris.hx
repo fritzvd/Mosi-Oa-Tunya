@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import com.haxepunk.graphics.Image;
 import com.haxepunk.Entity;
@@ -23,11 +23,11 @@ class Debris extends Entity {
 
     var scene:MainScene = cast(HXP.scene, MainScene);
     physScale = scene.physScale;
-
   }
 
   public function setGravity (grav:Float) {
-    bodyFixture.density = 0.0001;
+    // bodyDef.linearDamping = Math.random() * 0.05;
+    bodyDef.linearVelocity = new B2Vec2(0, -grav);
   }
 
   public function setGraphic(fileName) {

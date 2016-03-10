@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import com.haxepunk.Entity;
 import com.haxepunk.graphics.Tilemap;
@@ -16,14 +16,14 @@ class Mountain extends Entity {
     sizeX = (Std.int(Math.random() * 10));
     sizeY = (Std.int(Math.random() * 10));
 
-    if (sizeX == 0)
-      sizeX = 1;
-    if (sizeY == 0)
-      sizeY = 1;
+    if (sizeX < 5)
+      sizeX = 5;
+    if (sizeY < 5)
+      sizeY = 5;
 
     name = 'mountain';
 
-    setHitbox(sizeX, sizeY);
+    setHitbox(sizeX * 16, sizeY * 16);
 
     _tilemap = new Tilemap('graphics/mountain.png', sizeX * 16, sizeY * 16, 16, 16);
     graphic = _tilemap;
@@ -54,7 +54,7 @@ class Mountain extends Entity {
       }
     }
 
-    trace(map);
+    trace(map, sizeX, sizeY);
 
     _tilemap.loadFrom2DArray(map);
 

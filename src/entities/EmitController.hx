@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import com.haxepunk.graphics.Emitter;
 import com.haxepunk.graphics.Image;
@@ -29,9 +29,15 @@ class EmitController extends Entity
     layer = 10;
 	}
 
-	public function splash(x:Float, y:Float)
-	{
-		for (i in 0...30)
+	public function splash(x:Float, y:Float) {
+		for (i in 0...10)
+		{
+			_emitter.emit("splash", x, y);
+		}
+	}
+
+	public function smallSplash(x:Float, y:Float) {
+		for (i in 0...2)
 		{
 			_emitter.emit("splash", x, y);
 		}

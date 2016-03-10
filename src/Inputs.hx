@@ -1,3 +1,4 @@
+package;
 
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Joystick.XBOX_GAMEPAD;
