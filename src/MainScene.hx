@@ -2,6 +2,9 @@ import com.haxepunk.Scene;
 import com.haxepunk.HXP;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Key;
+import com.haxepunk.graphics.Backdrop;
+import com.haxepunk.graphics.Graphiclist;
+import com.haxepunk.Entity;
 
 import noisehx.Perlin;
 
@@ -33,18 +36,28 @@ class MainScene extends Scene
 
 	public var physScale:Int;
 
-	public override function begin()
-	{
+	public override function begin() {
 		physScale = 1;
 		// WATERFALL_SPEED = 0.3;
+
+		// add entitys;
 		kagiso = add(new Character(300, 0));
 		ec = add(new EmitController());
 		mountain = add(new Mountain(10,10));
-
 		rightOar = add(new Oar(kagiso.endOfRightOar.x, kagiso.endOfRightOar.y));
 		rightOar.sprite.angle = kagiso.sprite.angle;
 		leftOar = add(new Oar(kagiso.endOfLeftOar.x, kagiso.endOfLeftOar.y));
 		leftOar.sprite.angle = kagiso.sprite.angle;
+
+
+		var waterspeck:Backdrop = new Backdrop("graphics/waterspeck.png", true, true);
+		waterspeck.scale = 0.4;
+		waterspeck.scrollY = 0.8;
+		var waterspeck2:Backdrop = new Backdrop("graphics/waterspeck2.png", true, true);
+		waterspeck2.scrollY = 0.9;
+		var bgEntity:Entity = new Entity(0, 0);
+		bgEntity.graphic = new Graphiclist([waterspeck, waterspeck2]);
+		add(bgEntity);
 
 		perlin = new Perlin();
 		setupPhysics();

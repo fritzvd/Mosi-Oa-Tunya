@@ -56,8 +56,8 @@ class Character extends Entity {
     boatDef.position.set(Std.int(x) / physScale, Std.int(y) / physScale);
 		boatShape.setAsBox(sprite.scaledWidth / physScale, sprite.scaledHeight / physScale / 2);
     boatFixture = new B2FixtureDef ();
-    boatFixture.shape = boatShape;
 
+    boatFixture.shape = boatShape;
     setHitbox(Std.int(sprite.scaledWidth), Std.int(sprite.scaledHeight));
   }
 
