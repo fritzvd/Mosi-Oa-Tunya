@@ -19,12 +19,15 @@ class Character extends Entity {
   public var endOfRightOar:B2Vec2;
   public var endOfLeftOar:B2Vec2;
 
+  public var dead:Bool;
+
   private var boatAngle:Float;
   private var boatSpeed:Float;
   private var turnSpeed:Float;
   private var rowRadius:Float;
   private var moveDirection:String;
   private var physScale:Int;
+  public var health:Float;
 
   public function new (x,  y) {
     super(x, y);
@@ -35,13 +38,15 @@ class Character extends Entity {
     sprite.centerOrigin();
     graphic = sprite;
 
+    dead = false;
+
     turnSpeed = 0.1;
     boatSpeed = 0.9;
-    boatAngle = Math.PI / 2;
+    boatAngle = Math.PI / 2 * Math.random();
     rowRadius = 0.1;
 
     name = 'kagiso';
-    layer = 1;
+    health = 100.0;
 
     endOfLeftOar = new B2Vec2(x + 60 * Math.cos(boatAngle), y + 60 * Math.sin(boatAngle));
     endOfRightOar = new B2Vec2(x - 60 * Math.cos(boatAngle), y - 60 * Math.sin(boatAngle));
@@ -70,7 +75,7 @@ class Character extends Entity {
     var v = calculateArc(left);
 
     var direction = (left) ? -1 : 1;
-    var c = 3000;
+    var c = 200;
     var force:B2Vec2 = new B2Vec2(v.get('x') * c, v.get('y') * c);
 
     this.boat.applyForce(force, new B2Vec2(
@@ -82,18 +87,23 @@ class Character extends Entity {
   }
 
   public function die () {
-
+    dead = true;
   }
 
   public function holdOar(?left:Bool) {
     var angle = calculateNewAngle(boatAngle);
     var direction = (left) ? -1 : 1;
-    var c = 3000;
+    var c = 500;
 
     this.boat.applyTorque(c * direction * Math.abs(boatAngle - angle));
-    this.boat.setLinearDamping(1000);
+    this.boat.setAngularDamping(50);
+    slowDown();
 
     return boatAngle;
+  }
+
+  public function slowDown () {
+    this.boat.setLinearDamping(1);
   }
 
   private function calculateArc (?left:Bool) {
@@ -133,14 +143,20 @@ class Character extends Entity {
 
   public override function update () {
     var pos:B2Vec2 = boat.getPosition();
-    sprite.angle = 90 + boatAngle * HXP.DEG;
+    if (!dead) {
+      sprite.angle = 90 + boatAngle * HXP.DEG;
+    }
 
     this.x = pos.x * physScale;
     this.y = pos.y * physScale;
 
     placeOars();
 
+    if (dead) {
+      sprite.scale -= 0.1;
+      sprite.angle -= 1;
+    }
+
     super.update();
-    this.boat.setLinearDamping(0.0);
   }
 }

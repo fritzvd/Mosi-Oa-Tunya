@@ -5,14 +5,13 @@
  	<app file="Main" main="Main" path="bin" />
 
 	<window fps="60" background="0x1c92b0" />
-	<window width="640" height="480" resizable="true" unless="mobile" />
-	<window fullscreen="true" if="mobile" />
-	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp" />
+	<window width="400" height="600" resizable="true" unless="mobile" />
+	<window fullscreen="true" width="400" height="600" if="mobile" />
+	<window orientation="portrait" vsync="true" antialiasing="0" if="cpp" />
 
 	<source path="src" />
 
 	<haxelib name="HaxePunk" />
-	<haxelib name="nape" />
 	<haxelib name="box2d" />
 	<haxelib name="noisehx" />
 

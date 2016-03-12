@@ -10,7 +10,7 @@ import box2D.collision.shapes.*;
 
 class Debris extends Entity {
 
-  private var sprite:Image;
+  public var sprite:Image;
   public var bodyDef:B2BodyDef;
   public var body:B2Body;
   public var bodyShape:B2PolygonShape;
@@ -23,18 +23,21 @@ class Debris extends Entity {
 
     var scene:MainScene = cast(HXP.scene, MainScene);
     physScale = scene.physScale;
+
   }
 
   public function setGravity (grav:Float) {
     // bodyDef.linearDamping = Math.random() * 0.05;
-    bodyDef.linearVelocity = new B2Vec2(0, -grav);
+    bodyDef.linearVelocity = new B2Vec2(0, grav);
   }
 
-  public function setGraphic(fileName) {
+  public function setGraphic(fileName, scale) {
     sprite = new Image(fileName);
     sprite.smooth = false;
-    sprite.scale = 4;
+    sprite.scale = scale;
 
+    this.type = 'debris';
+    setHitbox(Std.int(sprite.scaledWidth) * 2, Std.int(sprite.scaledHeight) * 2);
     graphic = sprite;
     setupPhysics();
   }
@@ -60,7 +63,7 @@ class Debris extends Entity {
     this.y = pos.y * physScale;
 
     if (this.y > HXP.height) {
-      pos.y = -20 + HXP.scene.camera.y - HXP.halfHeight;
+      pos.y = -20 - HXP.height * 4;
       body.setPosition(pos);
     }
   }

@@ -2,6 +2,7 @@ package;
 
 import com.haxepunk.Engine;
 import com.haxepunk.HXP;
+import com.haxepunk.Sfx;
 
 class Main extends Engine
 {
@@ -11,6 +12,10 @@ class Main extends Engine
 #if debug
 		HXP.console.enable();
 #end
+
+		var music = new Sfx("audio/mosi.ogg");
+		music.loop(0.5);
+
 		HXP.scene = new MainScene();
 	}
 

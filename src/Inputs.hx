@@ -3,6 +3,8 @@ package;
 import com.haxepunk.utils.Input;
 import com.haxepunk.utils.Joystick.XBOX_GAMEPAD;
 import com.haxepunk.utils.Key;
+import com.haxepunk.utils.Touch;
+import com.haxepunk.HXP;
 
 class Inputs {
 
@@ -46,6 +48,7 @@ class Inputs {
   static inline public function action () {
     var _action:String = null;
 
+#if !mobile
     if (Input.joystick(0).pressed(XBOX_GAMEPAD.A_BUTTON) ||
         Input.pressed(Key.Z)) {
           _action = 'left';
@@ -55,10 +58,12 @@ class Inputs {
         Input.pressed(Key.X)) {
           _action = 'right';
     }
-
+#end
     return _action;
 
   }
+
+
 
   static inline public function holding () {
     var _holding:String = null;
@@ -74,6 +79,24 @@ class Inputs {
     }
 
     return _holding;
+  }
+
+  static inline public function shooting () {
+    var _shooting:Bool = false;
+    if (Input.joystick(0).pressed(XBOX_GAMEPAD.RB_BUTTON) ||
+        Input.pressed(Key.SPACE)) {
+          _shooting = true;
+    }
+    return _shooting;
+  }
+
+  static inline public function restart () {
+    var _restart:Bool = false;
+    if (Input.joystick(0).pressed(XBOX_GAMEPAD.START_BUTTON) ||
+        Input.pressed(Key.SPACE)) {
+          _restart = true;
+    }
+    return _restart;
   }
 
 }

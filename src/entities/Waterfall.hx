@@ -15,6 +15,7 @@ class Waterfall extends Entity {
     sprite = new Spritemap('graphics/waterfall.png', 20, 10);
     sprite.smooth = false;
     sprite.scale = 4;
+    layer = 100;
     sprite.add('idle', [0, 1, 2, 3], 12);
     sprite.play('idle');
 
